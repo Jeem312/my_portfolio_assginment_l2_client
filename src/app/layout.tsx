@@ -1,23 +1,38 @@
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import AuthProvider from "@/providers/AuthProvider";
+import { Toaster } from "sonner";
 
-// You can change this to your custom favicon icon, title and description
-export const metadata = {
-  title: 'Create Next Base',
-  description: 'A production-ready Next.js starter template crafted by ONTONIM to accelerate your web development workflow. This boilerplate combines modern technologies with enterprise-grade architecture to help you build performant, scalable applications faster.',
-  icons: {
-    icon: 'https://i.ibb.co/BHMGGW7z/ontonim.png',
-  },
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: "Next Blog",
+  description: "A simple blog built with Next.js, Tailwind CSS, and shadcn/ui.",
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html>
-      <body>
-        <main>{children}</main>
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <AuthProvider>
+          <Toaster richColors position="top-center" />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
