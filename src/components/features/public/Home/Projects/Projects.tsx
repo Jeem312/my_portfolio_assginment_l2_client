@@ -33,13 +33,16 @@ export async function Projects() {
               {/* Project Image with Overlay */}
               {project.thumbnail && (
                 <div className="relative h-56 w-full overflow-hidden bg-gray-900">
-                  <Image
-                    src={project.thumbnail || "/placeholder.svg"}
-                    alt={project.title}
-                 
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
+                 <Image
+  src={
+    project.thumbnail?.startsWith("http")
+      ? project.thumbnail
+      : "https://i.ibb.co/6bq8TzF/default-thumb.jpg" 
+  }
+  alt={project.title}
+  fill
+  className="object-cover group-hover:scale-110 transition-transform duration-700"
+/>
                   {/* Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#03081d] via-[#03081d]/60 to-transparent"></div>
 
