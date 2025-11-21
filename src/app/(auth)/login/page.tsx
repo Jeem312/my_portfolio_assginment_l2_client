@@ -1,4 +1,12 @@
+import LoginPage from '@/components/AdminOnly/LoginPage/LoginPage';
+import React from 'react';
 
-export default function LoginPage() {
-  return <h1>Login Page</h1>;
-}
+const page = () => {
+  return (
+    <div>
+      <LoginPage />
+    </div>
+  );
+};
+
+export default page;
