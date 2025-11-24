@@ -1,4 +1,3 @@
-
 import Image from "next/image"
 import Link from "next/link"
 import { Calendar, User, ArrowLeft, ArrowRight } from "lucide-react"
@@ -92,14 +91,14 @@ export default async function BlogDetailsPage({ params }: { params: { id: string
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <article className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 sm:p-12">
           <div
-            className="prose prose-invert prose-lg max-w-none
+            className="prose prose-invert prose-lg max-w-none text-white
               prose-headings:text-white prose-headings:font-bold
-              prose-p:text-gray-300 prose-p:leading-relaxed
+              prose-p:text-white prose-p:leading-relaxed
               prose-a:text-cyan-400 prose-a:no-underline hover:prose-a:underline
               prose-strong:text-white prose-strong:font-bold
-              prose-ul:text-gray-300 prose-ol:text-gray-300
-              prose-li:text-gray-300
-              prose-blockquote:border-l-cyan-400 prose-blockquote:text-gray-300
+              prose-ul:text-white prose-ol:text-white
+              prose-li:text-white
+              prose-blockquote:border-l-cyan-400 prose-blockquote:text-white
               prose-code:text-cyan-400 prose-code:bg-white/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded
               prose-pre:bg-white/10 prose-pre:border prose-pre:border-white/10"
             dangerouslySetInnerHTML={{ __html: blog.content }}
