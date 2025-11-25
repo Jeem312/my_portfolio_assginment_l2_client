@@ -4,9 +4,9 @@ import { FileText, FolderKanban, Eye, TrendingUp } from "lucide-react"
 export function DashboardStats() {
   const stats = [
     { label: "Total Blogs", value: "12", icon: FileText, color: "cyan" },
-    { label: "Total Projects", value: "8", icon: FolderKanban, color: "blue" },
-    { label: "Total Views", value: "1.2K", icon: Eye, color: "purple" },
-    { label: "Growth", value: "+23%", icon: TrendingUp, color: "green" },
+    { label: "Total Projects", value: "8", icon: FolderKanban, color: "cyan" },
+    { label: "Total Views", value: "1.2K", icon: Eye, color: "cyan" },
+    { label: "Growth", value: "+23%", icon: TrendingUp, color: "cyan" },
   ]
 
   return (

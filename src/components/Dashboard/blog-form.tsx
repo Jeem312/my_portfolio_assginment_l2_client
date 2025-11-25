@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { isAdminFromAccess } from "@/lib/admin"
+import { toast } from "sonner"
 
 export function BlogForm() {
   const [loading, setLoading] = useState(false)
@@ -54,30 +56,45 @@ export function BlogForm() {
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+  setLoading(true)
 
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      })
+  try {
+    const {token} = isAdminFromAccess()
+    // console.log("Admin Token:", token)
 
-      if (response.ok) {
-        alert("Blog created successfully!")
-        setFormData({ title: "", content: "", image: "", author: "Admin" })
-      } else {
-        alert("Failed to create blog")
-      }
-    } catch (error) {
-      console.error("Error:", error)
-      alert("An error occurred")
-    } finally {
+    if (!token) {
+      toast.error("You are not authorized")
       setLoading(false)
+      return
     }
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/blogs`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `${token}` 
+      },
+      body: JSON.stringify(formData),
+    })
+
+    if (response.ok) {
+      toast.success("Blog created successfully!")
+      setFormData({ title: "", content: "", image: "", author: "Admin" })
+    } else {
+      const errData = await response.json()
+      console.error("Failed to create blog:", errData)
+      toast.error(errData.message || "Failed to create blog")
+    }
+  } catch (error) {
+    console.error("Error:", error)
+    toast.error("An error occurred")
+  } finally {
+    setLoading(false)
   }
+}
+
 
   return (
     <form onSubmit={handleSubmit} className="backdrop-blur-xl bg-white/5 p-8 rounded-2xl border border-white/10">

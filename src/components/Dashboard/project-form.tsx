@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { isAdminFromAccess } from "@/lib/admin"
+import { toast } from "sonner"
 
 export function ProjectForm() {
   const [loading, setLoading] = useState(false)
@@ -96,14 +98,25 @@ export function ProjectForm() {
     setLoading(true)
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/projects`, {
+         const {token} = isAdminFromAccess()
+    // console.log("Admin Token:", token)
+
+    if (!token) {
+      toast.error("You are not authorized")
+      setLoading(false)
+      return
+    }
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/projects`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+         headers: {
+        "Content-Type": "application/json",
+        "Authorization": `${token}` 
+      },
         body: JSON.stringify(formData),
       })
 
       if (response.ok) {
-        alert("Project created successfully!")
+        toast.success("Project created successfully!")
         setFormData({
           title: "",
           description: "",
