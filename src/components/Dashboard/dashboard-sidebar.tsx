@@ -10,8 +10,8 @@ export function DashboardSidebar() {
 
   const navItems = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/dashboard/blogs/create", label: "Create Blog", icon: FileText },
-    { href: "/dashboard/projects/create", label: "Create Project", icon: FolderKanban },
+    { href: "/dashboard/blogs", label: "Create Blog", icon: FileText },
+    { href: "/dashboard/projects", label: "Projects", icon: FolderKanban },
     { href: "/", label: "Back to Site", icon: Home },
   ]
 
