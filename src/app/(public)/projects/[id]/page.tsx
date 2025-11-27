@@ -2,10 +2,10 @@
 import type { Metadata } from "next"
 import { getSingleProject } from "@/actions/projects"
 import ProjectDetailsClient from "@/components/features/public/Home/Projects/ProjectDetails"
-import { strict } from "assert"
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const project = await getSingleProject(params.id)
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params
+  const project = await getSingleProject(id)
 
   if (!project) {
     return {
@@ -25,8 +25,9 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   }
 }
 
-export default async function ProjectDetailsPage({ params }: { params: { id: string } }) {
-  const project = await getSingleProject(params.id)
+export default async function ProjectDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const project = await getSingleProject(id)
 
   if (!project) {
     return (
@@ -36,5 +37,5 @@ export default async function ProjectDetailsPage({ params }: { params: { id: str
     )
   }
 
-  return <ProjectDetailsClient project={project } />
+  return <ProjectDetailsClient project={project} />
 }

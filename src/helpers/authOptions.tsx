@@ -1,6 +1,24 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import { NextAuthOptions } from "next-auth";
 
+declare module "next-auth" {
+  interface User {
+    id?: string;
+    role?: string;
+    token?: string;
+  }
+  interface Session {
+    user: {
+      id?: string;
+      role?: string;
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+    };
+    token?: string;
+  }
+}
+
 
 export const authOptions: NextAuthOptions = {
   providers: [

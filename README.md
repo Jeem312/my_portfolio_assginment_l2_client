@@ -107,7 +107,7 @@ A modern, responsive personal portfolio website built with Next.js, TypeScript, 
 
 1. **Clone the repository**
    \`\`\`bash
-   git clone https://github.com/yourusername/portfolio-frontend.git
+   git clone https://github.com/Jeem312/my_portfolio_assginment_l2_client
    cd portfolio-frontend
    \`\`\`
 
@@ -152,7 +152,7 @@ Create a `.env.local` file in the root directory:
 
 \`\`\`env
 # API Configuration
-NEXT_PUBLIC_API_BASE_URL=https://portfolioassignment-alpha.vercel.app/api/v1
+NEXT_PUBLIC_API=https://portfolioassignment-alpha.vercel.app/api/v1
 
 # Optional: Revalidation time for ISR (in seconds)
 REVALIDATE_TIME=60
@@ -299,7 +299,7 @@ npm run lint         # Run ESLint
    - Deploy
 
 3. **Configure Environment Variables**
-   - Add `NEXT_PUBLIC_API_BASE_URL` in Vercel dashboard
+   - Add `NEXT_PUBLIC_API` in Vercel dashboard
    - Redeploy if needed
 
 ### Alternative Deployment Options
@@ -388,7 +388,7 @@ const skills = {
 
 ### API Connection Issues
 
-- Verify `NEXT_PUBLIC_API_BASE_URL` is set correctly
+- Verify `NEXT_PUBLIC_API` is set correctly
 - Check if backend is running
 - Inspect network tab in browser DevTools
 
@@ -409,8 +409,7 @@ const skills = {
 ## 📞 Contact & Support
 
 - **Email**: shanjidajeem312@gmail.com
-- **GitHub**: [Your GitHub Profile](https://github.com/yourusername)
-- **LinkedIn**: [Your LinkedIn Profile](https://linkedin.com/in/yourprofile)
+- **GitHub**: [Your GitHub Profile](https://github.com/Jeem312)
 
 ---
 

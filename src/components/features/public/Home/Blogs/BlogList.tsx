@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react"
 import type { Blog } from "@/types/blogs"
 import { useRouter } from "next/navigation"
-import { CalendarIcon } from "lucide-react"
 import { getBlogs } from "@/actions/blogs"
 import EditBlogModal from "./Modal"
+
 export default function BlogsList() {
   const [blogs, setBlog] = useState<Blog[]>([])
   const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null)
@@ -22,14 +22,7 @@ export default function BlogsList() {
     setBlog(data)
   }
 
-  const formatDate = (date: string | undefined) => {
-    if (!date) return "Recently"
-    return new Date(date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    })
-  }
+ 
 
   return (
     <div className="w-full text-white">
@@ -40,7 +33,7 @@ export default function BlogsList() {
         </h1>
 
         <button
-          onClick={() => router.push("/dashboard/blogs/create")}
+          onClick={() => router.push("/dashboard/create-blog")}
           className="px-5 py-2 rounded-lg text-black font-semibold bg-cyan-400 hover:bg-cyan-300 transition-all shadow-md"
         >
           + Create Blog
@@ -88,7 +81,8 @@ export default function BlogsList() {
               </div>
             )}
 
-          
+            {/* Content */}
+         
           </div>
         ))}
       </div>

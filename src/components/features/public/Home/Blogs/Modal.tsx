@@ -1,9 +1,13 @@
 "use client"
 
 import { useState } from "react"
+import { Editor } from "react-draft-wysiwyg"
+import { EditorState, ContentState, convertFromHTML, convertToRaw } from "draft-js"
 import type { Blog } from "@/types/blogs"
 import axios from "axios"
 import { X } from "lucide-react"
+import { isAdminFromAccess } from "@/lib/admin"
+import { toast } from "sonner"
 
 export default function EditBlogModal({
   blog,
@@ -17,13 +21,34 @@ export default function EditBlogModal({
   const [formData, setFormData] = useState<Blog>(blog)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+const {token }= isAdminFromAccess()
+  const blocksFromHTML = convertFromHTML(blog.content || "")
+  const [editorState, setEditorState] = useState(
+    EditorState.createWithContent(
+      ContentState.createFromBlockArray(blocksFromHTML.contentBlocks, blocksFromHTML.entityMap),
+    ),
+  )
 
   const handleSubmit = async () => {
     setLoading(true)
     setError("")
 
+    const contentHTML = JSON.stringify(convertToRaw(editorState.getCurrentContent()))
+
+    const updateData = {
+      ...formData,
+      content: contentHTML,
+    }
+
     try {
-      await axios.patch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/blogs/${blog._id}`, formData)
+      await axios.patch(`${process.env.NEXT_PUBLIC_BASE_API}/blogs/${blog._id}`, updateData,
+    {
+         headers: {
+          Authorization: `${token}`,
+        },
+    }
+    )
+    toast.success("Blog updated successfully!")
       refresh()
       onClose()
     } catch (err) {
@@ -96,18 +121,22 @@ export default function EditBlogModal({
             />
           </div>
 
-          {/* Content */}
+          {/* Content - Rich Text Editor */}
           <div>
             <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
               Content <span className="text-red-500">*</span>
             </label>
-            <textarea
-              className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all resize-none"
-              value={formData.content || ""}
-              onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-              placeholder="Write your blog content here..."
-              rows={8}
-            />
+            <div className="border text-black border-slate-300 dark:border-slate-600 rounded-lg overflow-hidden bg-white dark:bg-slate-800 focus-within:ring-2 focus-within:ring-cyan-500">
+              <Editor
+                editorState={editorState}
+                onEditorStateChange={setEditorState}
+                wrapperClassName="editor-wrapper-dark"
+                editorClassName="editor-content-dark px-4 py-3 min-h-48"
+                toolbar={{
+                  options: ["inline", "blockType", "list", "link", "history"],
+                }}
+              />
+            </div>
           </div>
         </div>
 
@@ -130,6 +159,29 @@ export default function EditBlogModal({
           </button>
         </div>
       </div>
+
+      {/* Custom styles for rich text editor */}
+      <style jsx>{`
+        :global(.editor-wrapper-dark) {
+          font-family: inherit;
+        }
+        :global(.editor-content-dark) {
+          color: inherit;
+        }
+        :global(.rdw-editor-main) {
+          background: transparent;
+          border: none;
+          padding: 0;
+        }
+        :global(.rdw-editor-toolbar) {
+          background: var(--background);
+          border: none;
+          border-bottom: 1px solid var(--border);
+        }
+        :global(.dark .rdw-editor-toolbar) {
+          background: rgb(30 41 59);
+        }
+      `}</style>
     </div>
   )
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Editor } from "react-draft-wysiwyg"
 import {
   EditorState,
@@ -14,6 +14,7 @@ import axios from "axios"
 import { X } from "lucide-react"
 import { isAdminFromAccess } from "@/lib/admin"
 import { toast } from "sonner"
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css"
 
 export default function EditProjectModal({
   project,
@@ -27,61 +28,89 @@ export default function EditProjectModal({
   const [formData, setFormData] = useState<Project>(project)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
-const {token} =isAdminFromAccess()
-  // ============================
-  // FIXED DESCRIPTION LOADER
-  // Supports RAW JSON + HTML
-  // ============================
-  let initialEditorState: EditorState
+  const [editorState, setEditorState] = useState<EditorState>(EditorState.createEmpty())
+  const [isMounted, setIsMounted] = useState(false)
 
-  try {
-    const raw = JSON.parse(project.description || "{}")
-    initialEditorState = EditorState.createWithContent(convertFromRaw(raw))
-  } catch {
-    const blocks = convertFromHTML(project.description || "")
-    initialEditorState = EditorState.createWithContent(
-      ContentState.createFromBlockArray(blocks.contentBlocks, blocks.entityMap),
-    )
-  }
+  const { token } = isAdminFromAccess()
 
-  const [editorState, setEditorState] = useState(initialEditorState)
+  // Initialize editor state only on client side
+  useEffect(() => {
+    setIsMounted(true)
+    
+    let initialEditorState: EditorState
 
-const handleSubmit = async () => {
-  setLoading(true)
-  setError("")
-
-  const descriptionRaw = JSON.stringify(
-    convertToRaw(editorState.getCurrentContent())
-  )
-
-  const updateData = {
-    ...formData,
-    description: descriptionRaw,
-  }
-
-  try {
-    await axios.patch(
-      `${process.env.NEXT_PUBLIC_BASE_API}/projects/${project._id}`,
-      updateData,
-      {
-        headers: {
-          Authorization: `${token}`,
-        },
+    try {
+      if (project.description) {
+        const raw = JSON.parse(project.description)
+        initialEditorState = EditorState.createWithContent(convertFromRaw(raw))
+      } else {
+        throw new Error("No description")
       }
+    } catch {
+      const blocks = convertFromHTML(project.description || "<p></p>")
+      initialEditorState = EditorState.createWithContent(
+        ContentState.createFromBlockArray(blocks.contentBlocks, blocks.entityMap),
+      )
+    }
+
+    setEditorState(initialEditorState)
+  }, [project.description])
+
+  const handleSubmit = async () => {
+    setLoading(true)
+    setError("")
+
+    const descriptionRaw = JSON.stringify(
+      convertToRaw(editorState.getCurrentContent())
     )
 
-    toast.success("Project updated successfully!")
+    const updateData = {
+      ...formData,
+      description: descriptionRaw,
+    }
 
-    refresh()
-    onClose()
-  } catch (err) {
-    setError("Failed to update project. Please try again.")
-    console.error(err)
-  } finally {
-    setLoading(false)
+    try {
+      await axios.patch(
+        `${process.env.NEXT_PUBLIC_BASE_API}/projects/${project._id}`,
+        updateData,
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+        }
+      )
+
+      toast.success("Project updated successfully!")
+      refresh()
+      onClose()
+    } catch (err) {
+      setError("Failed to update project. Please try again.")
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
   }
-}
 
+  // Don't render editor until mounted on client
+  if (!isMounted) {
+    return (
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-2xl overflow-auto max-h-[90vh] border border-slate-200 dark:border-slate-700">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+              Edit Project
+            </h2>
+            <button onClick={onClose}>
+              <X size={20} className="text-slate-600 dark:text-slate-400" />
+            </button>
+          </div>
+          <div className="px-6 py-6 text-center">
+            <p>Loading editor...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
@@ -166,12 +195,12 @@ const handleSubmit = async () => {
             <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
               Description
             </label>
-            <div className="border border-slate-300 dark:border-slate-600 rounded-lg overflow- text-black bg-white dark:bg-slate-800 focus-within:ring-2 focus-within:ring-cyan-500">
+            <div className="border border-slate-300 dark:border-slate-600 rounded-lg overflow-hidden text-black bg-white dark:bg-slate-800 focus-within:ring-2 focus-within:ring-cyan-500">
               <Editor
                 editorState={editorState}
                 onEditorStateChange={setEditorState}
-                wrapperClassName="editor-wrapper-dark"
-                editorClassName="editor-content-dark px-4 py-3 min-h-32"
+                wrapperClassName="editor-wrapper"
+                editorClassName="editor-content px-4 py-3 min-h-32"
                 toolbar={{
                   options: ["inline", "blockType", "list", "link", "history"],
                 }}
@@ -251,22 +280,6 @@ const handleSubmit = async () => {
           </button>
         </div>
       </div>
-
-      {/* Editor Styles */}
-      <style jsx>{`
-        :global(.editor-content-dark) {
-          color: inherit;
-        }
-        :global(.rdw-editor-main) {
-          background: transparent;
-          border: none;
-          padding: 0;
-        }
-        :global(.rdw-editor-toolbar) {
-          border: none;
-          border-bottom: 1px solid var(--border);
-        }
-      `}</style>
     </div>
   )
 }
