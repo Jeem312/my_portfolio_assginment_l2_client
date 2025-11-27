@@ -1,9 +1,15 @@
+// app/projects/[id]/page.tsx
 import { getSingleProject } from "@/actions/projects"
 import ProjectDetailsClient from "@/components/features/public/Home/Projects/ProjectDetails"
 
-// Example usage in your page
-export default async function ProjectPage({ params }: { params: { id: string } }) {
-  const project = await getSingleProject(params.id)
+interface ProjectPageProps {
+  params: Promise<{ id: string }>
+}
+
+export default async function ProjectPage({ params }: ProjectPageProps) {
+  // Await the params first
+  const { id } = await params
+  const project = await getSingleProject(id)
   
   if (!project) {
     return <div>Project not found</div>
