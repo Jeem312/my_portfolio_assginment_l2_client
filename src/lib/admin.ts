@@ -1,5 +1,5 @@
 
-
+"use client";
 
 export function getCookie(name: string): string | null {
   try {
