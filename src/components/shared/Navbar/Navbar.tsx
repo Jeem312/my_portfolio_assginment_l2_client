@@ -3,9 +3,8 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { signOut, useSession } from "next-auth/react"
+import { signOut } from "next-auth/react"
 import { Menu, User } from "lucide-react"
-import { logout } from "@/actions/auth"
 import { isAdminFromAccess } from "@/lib/admin"
 import { Button } from "@/components/ui/button"
 
@@ -14,11 +13,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [profileDropdown, setProfileDropdown] = useState(false)
-  const { data: session, status } = useSession()
-
   const { isAdmin } = isAdminFromAccess()
-  console.log("Navbar isAdmin:", isAdmin)
-
   // Scroll detection
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10)

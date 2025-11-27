@@ -1,8 +1,8 @@
 import { Project } from "@/types/project"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 
 const BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  process.env.NEXT_PUBLIC_API ||
   "https://portfolioassignment-alpha.vercel.app/api/v1"
 
 
@@ -34,8 +34,9 @@ export const getSingleProject = async (id: string): Promise<Project | null> => {
   try {
     const { data } = await api.get<ApiResponse<Project>>(`/projects/${id}`)
     return data.data || null
-  } catch (error: any) {
-    console.error("[axios] Error fetching single project:", error?.response?.data || error)
+  } catch (error: unknown) {
+    const axiosError = error as AxiosError
+    console.error("[axios] Error fetching single project:", axiosError?.response?.data || error)
     return null
   }
 }
@@ -44,8 +45,9 @@ export const getProjects = async (): Promise<Project[]> => {
   try {
     const { data } = await api.get<ApiResponse<Project[]>>("/projects")
     return data.data || []
-  } catch (error: any) {
-    console.error("[axios] Error fetching projects:", error?.response?.data || error)
+  } catch (error: unknown) {
+    const axiosError = error as AxiosError
+    console.error("[axios] Error fetching projects:", axiosError?.response?.data || error)
     return []
   }
 }
@@ -55,8 +57,9 @@ export const createProject = async (projectData: Project): Promise<Project | nul
   try {
     const { data } = await api.post<ApiResponse<Project>>("/projects", projectData)
     return data.data || null
-  } catch (error: any) {
-    console.error("[axios] Error creating project:", error?.response?.data || error)
+  } catch (error: unknown) {
+    const axiosError = error as AxiosError
+    console.error("[axios] Error creating project:", axiosError?.response?.data || error)
     return null
   }
 }

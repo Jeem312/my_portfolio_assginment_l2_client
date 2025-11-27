@@ -1,15 +1,8 @@
+import { Blog } from "@/types/blogs"
+
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://portfolioassignment-alpha.vercel.app/api/v1"
 
 
-export interface Blog {
-  _id: string
-  title: string
-  content: string
-  image?: string
-  author: string
-  createdAt: string
-  updatedAt: string
-}
 
 export interface ApiResponse<T> {
   StatusCode: number

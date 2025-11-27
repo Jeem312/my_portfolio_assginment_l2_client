@@ -46,6 +46,7 @@ export default function LoginPage() {
       }
 
     } catch (err) {
+      console.error("Login Error:", err)
       setError("Login failed. Only Admin Can  Login.")
       toast.error("Login failed. Only Admin Can  Login.")
     } finally {

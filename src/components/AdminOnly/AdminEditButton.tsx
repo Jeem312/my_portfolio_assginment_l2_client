@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Edit } from "lucide-react"
 import { isAdminFromAccess } from "@/lib/admin"
 
-export function AdminEditButton({ id, href }: { id: string; href: string }) {
+export function AdminEditButton({  href }: { id: string; href: string }) {
   // সরাসরি call করুন (useEffect ছাড়া)
   const { isAdmin } = isAdminFromAccess()
   

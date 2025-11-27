@@ -33,7 +33,7 @@ export function About() {
             </div>
             <div className="space-y-4 text-gray-300 leading-relaxed">
               <p>
-                Hi! I'm <span className="text-cyan-400 font-semibold">Shanjida Jahan Jeem</span>, a passionate Full
+                Hi! Im <span className="text-cyan-400 font-semibold">Shanjida Jahan Jeem</span>, a passionate Full
                 Stack Developer specializing in building exceptional digital experiences. I love turning complex
                 problems into simple, beautiful, and intuitive solutions.
               </p>
@@ -43,7 +43,7 @@ export function About() {
                 constant desire to learn and grow.
               </p>
               <p>
-                When I'm not coding, you'll find me exploring new technologies, contributing to open-source projects, or
+                When Im not coding, youll find me exploring new technologies, contributing to open-source projects, or
                 sharing knowledge with the developer community.
               </p>
             </div>
@@ -102,8 +102,8 @@ export function About() {
                 <h3 className="text-xl font-bold text-white">My Passion</h3>
               </div>
               <p className="text-gray-300 leading-relaxed">
-                Building products that people love to use. I'm passionate about creating seamless user experiences and
-                writing code that's both elegant and efficient.
+                Building products that people love to use. Im passionate about creating seamless user experiences and
+                writing code thats both elegant and efficient.
               </p>
             </div>
           </div>

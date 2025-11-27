@@ -5,8 +5,13 @@ import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import { getBlogs, getSingleBlog } from "@/actions/blogs"
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const blog = await getSingleBlog(params.id)
+type Params = {
+  id: string
+}
+
+export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
+  const { id } = await params
+  const blog = await getSingleBlog(id)
 
   if (!blog) {
     return {
@@ -15,25 +20,26 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     }
   }
 
+  // Clean HTML for SEO
+  const plainDescription = blog.content.replace(/<[^>]*>/g, "").substring(0, 160)
+
   return {
     title: `${blog.title} | Blog`,
-    description: blog.content.replace(/<[^>]*>/g, "").substring(0, 160),
+    description: plainDescription,
     openGraph: {
       title: blog.title,
-      description: blog.content.replace(/<[^>]*>/g, "").substring(0, 160),
+      description: plainDescription,
       images: blog.image ? [blog.image] : [],
     },
   }
 }
 
-export default async function BlogDetailsPage({ params }: { params: { id: string } }) {
-  const blog = await getSingleBlog(params.id)
+export default async function BlogDetailsPage({ params }: { params: Promise<Params> }) {
+  const { id } = await params
+  const blog = await getSingleBlog(id)
 
-  if (!blog) {
-    notFound()
-  }
+  if (!blog) notFound()
 
-  // Fetch other blogs for the slider (excluding current blog)
   const allBlogs = await getBlogs()
   const relatedBlogs = allBlogs.filter((b) => b._id !== blog._id).slice(0, 6)
 
@@ -43,7 +49,13 @@ export default async function BlogDetailsPage({ params }: { params: { id: string
       <div className="relative h-[60vh] w-full overflow-hidden">
         {blog.image ? (
           <>
-            <Image src={blog.image || "/placeholder.svg"} alt={blog.title} fill className="object-cover" priority />
+            <Image
+              src={blog.image || "/placeholder.svg"}
+              alt={blog.title}
+              fill
+              className="object-cover"
+              priority
+            />
             <div className="absolute inset-0 bg-gradient-to-b from-[#03081d]/60 via-[#03081d]/80 to-[#03081d]"></div>
           </>
         ) : (
@@ -61,10 +73,10 @@ export default async function BlogDetailsPage({ params }: { params: { id: string
           </Link>
         </div>
 
-        {/* Blog Title Overlay */}
+        {/* Blog Title */}
         <div className="absolute bottom-0 left-0 right-0 p-8 sm:p-12">
           <div className="max-w-5xl mx-auto">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 animate-fade-in leading-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
               {blog.title}
             </h1>
             <div className="flex items-center gap-6 text-gray-300">
@@ -106,7 +118,7 @@ export default async function BlogDetailsPage({ params }: { params: { id: string
         </article>
       </div>
 
-      {/* Related Blogs Slider */}
+      {/* Related Blogs Section */}
       {relatedBlogs.length > 0 && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="mb-12">
@@ -116,7 +128,6 @@ export default async function BlogDetailsPage({ params }: { params: { id: string
             <p className="text-gray-300 text-lg">Continue reading with these related posts</p>
           </div>
 
-          {/* Horizontal Scrollable Container */}
           <div className="relative">
             <div className="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
               {relatedBlogs.map((relatedBlog, index) => (
@@ -124,12 +135,9 @@ export default async function BlogDetailsPage({ params }: { params: { id: string
                   key={relatedBlog._id}
                   href={`/blogs/${relatedBlog._id}`}
                   className="group flex-shrink-0 w-80 snap-start"
-                  style={{
-                    animation: `slideInRight 0.6s ease-out ${index * 0.1}s both`,
-                  }}
+                  style={{ animation: `slideInRight 0.6s ease-out ${index * 0.1}s both` }}
                 >
                   <article className="h-full bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden hover:border-cyan-400/50 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-400/20">
-                    {/* Image */}
                     <div className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-cyan-400/20 to-cyan-400/5">
                       {relatedBlog.image ? (
                         <Image
@@ -148,9 +156,7 @@ export default async function BlogDetailsPage({ params }: { params: { id: string
                       <div className="absolute inset-0 bg-gradient-to-t from-[#03081d] via-transparent to-transparent"></div>
                     </div>
 
-                    {/* Content */}
                     <div className="p-6 space-y-3">
-                      {/* Meta */}
                       <div className="flex items-center gap-3 text-xs text-gray-400">
                         <div className="flex items-center gap-1">
                           <User className="w-3 h-3 text-cyan-400" />
@@ -167,17 +173,14 @@ export default async function BlogDetailsPage({ params }: { params: { id: string
                         </div>
                       </div>
 
-                      {/* Title */}
                       <h3 className="text-xl font-bold text-white group-hover:text-cyan-400 transition-colors line-clamp-2">
                         {relatedBlog.title}
                       </h3>
 
-                      {/* Excerpt */}
                       <p className="text-gray-300 line-clamp-2 text-sm">
                         {relatedBlog.content.replace(/<[^>]*>/g, "").substring(0, 100)}...
                       </p>
 
-                      {/* Read More */}
                       <div className="flex items-center gap-2 text-cyan-400 font-medium text-sm group-hover:gap-3 transition-all">
                         <span>Read More</span>
                         <ArrowRight className="w-4 h-4" />
@@ -188,7 +191,6 @@ export default async function BlogDetailsPage({ params }: { params: { id: string
               ))}
             </div>
 
-            {/* Scroll Indicator */}
             <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-2 text-cyan-400 text-sm animate-bounce">
               <span>Scroll for more</span>
               <ArrowRight className="w-4 h-4" />

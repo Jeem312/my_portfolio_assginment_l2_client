@@ -1,6 +1,6 @@
 
 import { getProjects } from "@/actions/projects"
-import { ExternalLink, Github, Calendar } from "lucide-react"
+import { ExternalLink, Github} from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 

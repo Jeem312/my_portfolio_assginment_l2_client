@@ -27,7 +27,7 @@ export default function NotFound() {
             <h2 className="text-3xl font-bold text-white">Page Not Found</h2>
           </div>
           <p className="text-gray-400 text-lg leading-relaxed mb-6">
-            Oops! The page you're looking for seems to have wandered off into the digital void. Don't worry, even the
+            Oops! The page youre looking for seems to have wandered off into the digital void. Dont worry, even the
             best explorers get lost sometimes.
           </p>
 
@@ -78,7 +78,7 @@ export default function NotFound() {
 
         {/* Fun fact */}
         <p className="mt-8 text-gray-500 text-sm italic">
-          Fun fact: HTTP 404 errors have been around since 1992. You're part of internet history!
+          Fun fact: HTTP 404 errors have been around since 1992. Youre part of internet history!
         </p>
       </div>
     </div>
